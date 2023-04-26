@@ -1,2 +1,2 @@
-# Microsoft-Azure-Cognitive-Services
-Microsoft Azure Cognitive Services
+#Practical Guide to Azure Cognitive Services
+Practical Guide to Azure Cognitive Services
