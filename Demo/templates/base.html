@@ -1,0 +1,57 @@
+{% load django_htmx %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@themesberg/flowbite@1.2.0/dist/flowbite.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tw-elements/dist/css/index.min.css" />
+  <title>Ocean Smart Portal</title>
+</head>
+<body>
+{% if user.is_authenticated %}
+<nav class="flex items-center justify-between flex-wrap bg-emerald-700 p-6">
+  <div class="block lg:hidden">
+    <button
+        class="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white">
+      <svg class="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title>
+        <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/>
+      </svg>
+    </button>
+  </div>
+  <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
+    <div class="lg:flex-grow text-green-100">
+      <a class="block mt-4 lg:inline-block lg:mt-0 hover:text-white mr-4" href="{% url 'portal:index' %}">
+        Ocean Smart
+      </a>
+      <a class="block mt-4 lg:inline-block lg:mt-0 hover:text-white mr-4" href="{% url 'cognitive_search:index' %}">
+        Cognitive Search
+      </a>
+      <a class="block mt-4 lg:inline-block lg:mt-0 hover:text-white mr-4" href="{% url 'forms_recognizer:index' %}">
+        Form Recognizer
+      </a>
+      <a class="block mt-4 lg:inline-block lg:mt-0 hover:text-white mr-4" href="{% url 'cognitive_vision:index' %}">
+        Cognitive Vision
+      </a>
+      <a class="block mt-4 lg:inline-block lg:mt-0 hover:text-white mr-4" href="{% url 'knowledge_mining:index' %}">
+        Knowledge Mining
+      </a>
+      <a class="block mt-4 lg:inline-block lg:mt-0 hover:text-white mr-4" href="{% url 'account_logout' %}">
+        Log Out
+      </a>
+    </div>
+  </div>
+</nav>
+{% endif %}
+{% block content %}
+{% endblock %}
+<script src="https://unpkg.com/@themesberg/flowbite@1.2.0/dist/flowbite.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.6.0"
+        integrity="sha384-G4dtlRlMBrk5fEiRXDsLjriPo8Qk5ZeHVVxS8KhX6D7I9XXJlNqbdvRlp9/glk5D"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js"></script>
+{% django_htmx_script %}
+</body>
+</html>

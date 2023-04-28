@@ -1,0 +1,16 @@
+
+## Get User's Articles
+# @name rank_articles
+http://localhost:7071/api/GetRankedArticles?user=Andy
+
+
+@event_id = {{rank_articles.response.body.event_id}} 
+@plattter = {{rank_articles.response.body.best_action}}
+
+### send reward
+# @name send_reward
+http://localhost:7071/api/RewardAction?event_id={{event_id}}&action={{plattter}}&reward=1
+
+
+
+

@@ -1,0 +1,307 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ASAApiVersion": {
+      "type": "string"
+    },
+    "StreamAnalyticsJobName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 63,
+      "metadata": {
+        "description": "Stream Analytics job name can contain alphanumeric characters, hyphens, and underscores only and must be 3-63 characters long."
+      }
+    },
+    "Location": {
+      "type": "string"
+    },
+    "OutputStartMode": {
+      "type": "string",
+      "allowedValues": [
+        "JobStartTime",
+        "CustomTime",
+        "LastOutputEventTime"
+      ]
+    },
+    "OutputStartTime": {
+      "type": "string"
+    },
+    "DataLocale": {
+      "type": "string"
+    },
+    "OutputErrorPolicy": {
+      "type": "string",
+      "allowedValues": [
+        "Drop",
+        "Stop"
+      ]
+    },
+    "EventsLateArrivalMaxDelayInSeconds": {
+      "type": "int"
+    },
+    "EventsOutOfOrderMaxDelayInSeconds": {
+      "type": "int"
+    },
+    "EventsOutOfOrderPolicy": {
+      "type": "string",
+      "allowedValues": [
+        "Adjust",
+        "Drop"
+      ]
+    },
+    "StreamingUnits": {
+      "type": "int",
+      "minValue": 1,
+      "maxValue": 396,
+      "metadata": {
+        "description": "Number of Streaming Units"
+      },
+      "allowedValues": [
+        1,
+        3,
+        6,
+        12,
+        18,
+        24,
+        30,
+        36,
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90,
+        96,
+        102,
+        108,
+        114,
+        120,
+        126,
+        132,
+        138,
+        144,
+        150,
+        156,
+        162,
+        168,
+        174,
+        180,
+        186,
+        192,
+        198,
+        204,
+        210,
+        216,
+        222,
+        228,
+        234,
+        240,
+        246,
+        252,
+        258,
+        264,
+        270,
+        276,
+        282,
+        288,
+        294,
+        300,
+        306,
+        312,
+        318,
+        324,
+        330,
+        336,
+        342,
+        348,
+        354,
+        360,
+        366,
+        372,
+        378,
+        384,
+        390,
+        396
+      ]
+    },
+    "CompatibilityLevel": {
+      "type": "string",
+      "allowedValues": [
+        "1.0",
+        "1.1",
+        "1.2"
+      ]
+    },
+    "ContentStoragePolicy": {
+      "type": "string",
+      "allowedValues": [
+        "SystemAccount",
+        "JobStorageAccount"
+      ]
+    },
+    "Input_chillertemps_serviceBusNamespace": {
+      "type": "string"
+    },
+    "Input_chillertemps_eventHubName": {
+      "type": "string"
+    },
+    "Input_chillertemps_consumerGroupName": {
+      "type": "string"
+    },
+    "Input_chillertemps_sharedAccessPolicyName": {
+      "type": "string"
+    },
+    "Input_chillertemps_sharedAccessPolicyKey": {
+      "type": "string"
+    },
+    "Input_chillertemps_authenticationMode": {
+      "type": "string"
+    },
+    "Output_ProcessEventsFunction_functionAppName": {
+      "type": "string"
+    },
+    "Output_ProcessEventsFunction_functionName": {
+      "type": "string"
+    },
+    "Output_ProcessEventsFunction_apiKey": {
+      "type": "string"
+    },
+    "Output_ProcessEventsFunction_maxBatchSize": {
+      "type": "int"
+    },
+    "Output_ProcessEventsFunction_maxBatchCount": {
+      "type": "int"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.StreamAnalytics/StreamingJobs",
+      "apiVersion": "[parameters('ASAApiVersion')]",
+      "name": "[parameters('StreamAnalyticsJobName')]",
+      "location": "[parameters('Location')]",
+      "properties": {
+        "outputStartMode": "[parameters('OutputStartMode')]",
+        "outputStartTime": "[if(equals(parameters('OutputStartMode'),'CustomTime'), parameters('OutputStartTime'), json('null'))]",
+        "sku": {
+          "name": "standard"
+        },
+        "jobType": "Cloud",
+        "eventsOutOfOrderPolicy": "[parameters('EventsOutOfOrderPolicy')]",
+        "outputErrorPolicy": "[parameters('OutputErrorPolicy')]",
+        "eventsOutOfOrderMaxDelayInSeconds": "[parameters('EventsOutOfOrderMaxDelayInSeconds')]",
+        "eventsLateArrivalMaxDelayInSeconds": "[parameters('EventsLateArrivalMaxDelayInSeconds')]",
+        "dataLocale": "[parameters('DataLocale')]",
+        "compatibilityLevel": "[parameters('CompatibilityLevel')]",
+        "contentStoragePolicy": "[parameters('ContentStoragePolicy')]",
+        "transformation": {
+          "name": "Transformation",
+          "properties": {
+            "streamingUnits": "[parameters('StreamingUnits')]",
+            "query": "with eventgroups as (\r\nselect window_count = count(*)\r\n        , window_start = (topone() over (order by EventEnqueuedUtcTime)).EventEnqueuedUtcTime\r\n        , window_end = (topone() over (order by EventEnqueuedUtcTime desc)).EventEnqueuedUtcTime\r\n        , details = collect(UDF.getEventDetails(date_utc, time_utc, temp_f))\r\n  from [chillertemps] timestamp by EventEnqueuedUtcTime\r\n group by slidingwindow(minute, 15)\r\nhaving count(*) > 12\r\n)\r\n\r\nselect eventgroups.*\r\n  into [ProcessEventsFunction]\r\n  from eventgroups\r\n-- where datediff(minute, topone() over (order by window_end desc limit duration(hour, 1)).window_end, UDF.getCurrentTime('s')) < 2\r\n"
+          }
+        },
+        "inputs": [
+          {
+            "name": "chillertemps",
+            "properties": {
+              "type": "Stream",
+              "datasource": {
+                "type": "Microsoft.ServiceBus/EventHub",
+                "properties": {
+                  "serviceBusNamespace": "[parameters('Input_chillertemps_serviceBusNamespace')]",
+                  "eventHubName": "[parameters('Input_chillertemps_eventHubName')]",
+                  "consumerGroupName": "[parameters('Input_chillertemps_consumerGroupName')]",
+                  "sharedAccessPolicyName": "[parameters('Input_chillertemps_sharedAccessPolicyName')]",
+                  "sharedAccessPolicyKey": "[parameters('Input_chillertemps_sharedAccessPolicyKey')]",
+                  "authenticationMode": "[parameters('Input_chillertemps_authenticationMode')]"
+                }
+              },
+              "compression": {
+                "type": "None"
+              },
+              "serialization": {
+                "type": "Json",
+                "properties": {
+                  "encoding": "UTF8"
+                }
+              }
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "name": "ProcessEventsFunction",
+            "properties": {
+              "datasource": {
+                "type": "Microsoft.AzureFunction",
+                "properties": {
+                  "functionAppName": "[parameters('Output_ProcessEventsFunction_functionAppName')]",
+                  "functionName": "[parameters('Output_ProcessEventsFunction_functionName')]",
+                  "apiKey": "[parameters('Output_ProcessEventsFunction_apiKey')]",
+                  "maxBatchSize": "[parameters('Output_ProcessEventsFunction_maxBatchSize')]",
+                  "maxBatchCount": "[parameters('Output_ProcessEventsFunction_maxBatchCount')]"
+                }
+              }
+            }
+          }
+        ],
+        "functions": [
+          {
+            "name": "getCurrentTime",
+            "properties": {
+              "type": "Scalar",
+              "properties": {
+                "inputs": [
+                  {
+                    "dataType": "any"
+                  }
+                ],
+                "output": {
+                  "dataType": "datetime"
+                },
+                "binding": {
+                  "type": "Microsoft.StreamAnalytics/JavascriptUdf",
+                  "properties": {
+                    "script": "function main(s) {\n    return new Date().toISOString();\n}"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "getEventDetails",
+            "properties": {
+              "type": "Scalar",
+              "properties": {
+                "inputs": [
+                  {
+                    "dataType": "any"
+                  },
+                  {
+                    "dataType": "any"
+                  },
+                  {
+                    "dataType": "any"
+                  }
+                ],
+                "output": {
+                  "dataType": "any"
+                },
+                "binding": {
+                  "type": "Microsoft.StreamAnalytics/JavascriptUdf",
+                  "properties": {
+                    "script": "function main(date_utc, time_utc, temp_f) {\n  //get details object from input payload\n\n  var event_details = {};\n  event_details.date_utc = date_utc;\n  event_details.time_utc = time_utc;\n  event_details.temp_f = temp_f;\n\n  return event_details;\n}"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+azure-ai-formrecognizer = "*"
+pypdf2 = "*"
+sqlalchemy = "*"
+case-converter = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3"
+
+[pipenv]
+allow_prereleases = true

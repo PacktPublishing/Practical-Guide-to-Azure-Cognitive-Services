@@ -1,0 +1,23 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_chapter_13_retrieve_transcription_name": {
+            "value": "chapter-13-retrieve-transcription"
+        },
+        "workflows_chapter-13-retrieve-transcription_parameters_$connections": {
+            "value": {
+                "azureblob": {
+                    "connectionId": "/subscriptions/b9cb82ad-f6fc-425b-aeb3-7d74d86db771/resourceGroups/Chapter13/providers/Microsoft.Web/connections/azureblob",
+                    "connectionName": "azureblob",
+                    "id": "/subscriptions/b9cb82ad-f6fc-425b-aeb3-7d74d86db771/providers/Microsoft.Web/locations/eastus2/managedApis/azureblob"
+                },
+                "azuretables": {
+                    "connectionId": "/subscriptions/b9cb82ad-f6fc-425b-aeb3-7d74d86db771/resourceGroups/Chapter13/providers/Microsoft.Web/connections/azuretables",
+                    "connectionName": "azuretables",
+                    "id": "/subscriptions/b9cb82ad-f6fc-425b-aeb3-7d74d86db771/providers/Microsoft.Web/locations/eastus2/managedApis/azuretables"
+                }
+            }
+        }
+    }
+}

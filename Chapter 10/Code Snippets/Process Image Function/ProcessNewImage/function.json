@@ -1,0 +1,28 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "name": "inBlob",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "images/{name}",
+      "connection": "oceansmartst_STORAGE"
+    },
+    {
+      "name": "outTable",
+      "type": "table",
+      "tableName": "results",
+      "partitionKey": "result",
+      "connection": "oceansmartst_STORAGE",
+      "direction": "out"
+    },
+    {
+      "name": "outBlob",
+      "type": "blob",
+      "dataType": "binary",
+      "path": "results/{name}-results.json",
+      "connection": "oceansmartst_STORAGE",
+      "direction": "out"
+    }
+  ]
+}

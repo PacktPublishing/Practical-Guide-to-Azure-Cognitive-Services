@@ -1,0 +1,78 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ASAApiVersion": {
+      "value": "2017-04-01-preview"
+    },
+    "StreamAnalyticsJobName": {
+      "value": "chapter09asa"
+    },
+    "Location": {
+      "value": "Central US"
+    },
+    "OutputStartMode": {
+      "value": "JobStartTime"
+    },
+    "OutputStartTime": {
+      "value": "2019-01-01T00:00:00Z"
+    },
+    "DataLocale": {
+      "value": "en-US"
+    },
+    "OutputErrorPolicy": {
+      "value": "Stop"
+    },
+    "EventsLateArrivalMaxDelayInSeconds": {
+      "value": 5
+    },
+    "EventsOutOfOrderMaxDelayInSeconds": {
+      "value": 0
+    },
+    "EventsOutOfOrderPolicy": {
+      "value": "Adjust"
+    },
+    "StreamingUnits": {
+      "value": 1
+    },
+    "CompatibilityLevel": {
+      "value": "1.2"
+    },
+    "ContentStoragePolicy": {
+      "value": "SystemAccount"
+    },
+    "Input_chillertemps_serviceBusNamespace": {
+      "value": "oceansmart-chapter9"
+    },
+    "Input_chillertemps_eventHubName": {
+      "value": "chillertemps"
+    },
+    "Input_chillertemps_consumerGroupName": {
+      "value": ""
+    },
+    "Input_chillertemps_sharedAccessPolicyName": {
+      "value": "chapter09asa_chillertemps_policy"
+    },
+    "Input_chillertemps_sharedAccessPolicyKey": {
+      "value": null
+    },
+    "Input_chillertemps_authenticationMode": {
+      "value": "ConnectionString"
+    },
+    "Output_ProcessEventsFunction_functionAppName": {
+      "value": "ch09-functions"
+    },
+    "Output_ProcessEventsFunction_functionName": {
+      "value": "ProcessChillerEvents"
+    },
+    "Output_ProcessEventsFunction_apiKey": {
+      "value": null
+    },
+    "Output_ProcessEventsFunction_maxBatchSize": {
+      "value": 262144
+    },
+    "Output_ProcessEventsFunction_maxBatchCount": {
+      "value": 1
+    }
+  }
+}

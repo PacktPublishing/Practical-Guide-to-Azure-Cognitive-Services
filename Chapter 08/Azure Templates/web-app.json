@@ -1,0 +1,181 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sites_oceansmart_name": {
+            "defaultValue": "oceansmart",
+            "type": "String"
+        },
+        "serverfarms_ASP_Chapter08_b767_externalid": {
+            "defaultValue": "/subscriptions/b9cb82ad-f6fc-425b-aeb3-7d74d86db771/resourceGroups/Chapter08/providers/Microsoft.Web/serverfarms/ASP-Chapter08-b767",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2021-03-01",
+            "name": "[parameters('sites_oceansmart_name')]",
+            "location": "East US",
+            "kind": "app,linux,container",
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_oceansmart_name'), '.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('sites_oceansmart_name'), '.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[parameters('serverfarms_ASP_Chapter08_b767_externalid')]",
+                "reserved": true,
+                "isXenon": false,
+                "hyperV": false,
+                "siteConfig": {
+                    "numberOfWorkers": 1,
+                    "linuxFxVersion": "[concat('DOCKER|', parameters('sites_oceansmart_name'), '.azurecr.io/', parameters('sites_oceansmart_name'), ':latest')]",
+                    "acrUseManagedIdentityCreds": false,
+                    "alwaysOn": true,
+                    "http20Enabled": false,
+                    "functionAppScaleLimit": 0,
+                    "minimumElasticInstanceCount": 0
+                },
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "clientCertMode": "Required",
+                "hostNamesDisabled": false,
+                "customDomainVerificationId": "3024762E1E2ED77DCE11BD7DB67DC34CD412F9C42304AFE8DE851044D2FDFD1A",
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": false,
+                "redundancyMode": "None",
+                "storageAccountRequired": false,
+                "keyVaultReferenceIdentity": "SystemAssigned"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+            "apiVersion": "2021-03-01",
+            "name": "[concat(parameters('sites_oceansmart_name'), '/ftp')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_oceansmart_name'))]"
+            ],
+            "properties": {
+                "allow": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+            "apiVersion": "2021-03-01",
+            "name": "[concat(parameters('sites_oceansmart_name'), '/scm')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_oceansmart_name'))]"
+            ],
+            "properties": {
+                "allow": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2021-03-01",
+            "name": "[concat(parameters('sites_oceansmart_name'), '/web')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_oceansmart_name'))]"
+            ],
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "linuxFxVersion": "DOCKER|oceansmart.azurecr.io/oceansmart:latest",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "httpLoggingEnabled": false,
+                "acrUseManagedIdentityCreds": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "$oceansmart",
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": true,
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": true
+                    }
+                ],
+                "loadBalancing": "LeastRequests",
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "autoHealEnabled": false,
+                "vnetRouteAllEnabled": false,
+                "vnetPrivatePortsCount": 0,
+                "localMySqlEnabled": false,
+                "ipSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 1,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 1,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictionsUseMain": false,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "scmMinTlsVersion": "1.0",
+                "ftpsState": "AllAllowed",
+                "preWarmedInstanceCount": 0,
+                "functionAppScaleLimit": 0,
+                "functionsRuntimeScaleMonitoringEnabled": false,
+                "minimumElasticInstanceCount": 0,
+                "azureStorageAccounts": {}
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2021-03-01",
+            "name": "[concat(parameters('sites_oceansmart_name'), '/', parameters('sites_oceansmart_name'), '.azurewebsites.net')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_oceansmart_name'))]"
+            ],
+            "properties": {
+                "siteName": "oceansmart",
+                "hostNameType": "Verified"
+            }
+        }
+    ]
+}

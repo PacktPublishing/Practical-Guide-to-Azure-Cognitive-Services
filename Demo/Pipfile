@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "==4.1.2"
+azure-ai-formrecognizer = "==3.2.0"
+case-converter = "*"
+pypdf2 = "*"
+django-storages = {extras = ["azure"], version = "*"}
+django-dotenv = "*"
+django-htmx = "*"
+gunicorn = "*"
+django-allauth = "*"
+pycodestyle = "*"
+azure-search-documents = "*"
+azure-storage-queue = "*"
+azure-data-tables = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"

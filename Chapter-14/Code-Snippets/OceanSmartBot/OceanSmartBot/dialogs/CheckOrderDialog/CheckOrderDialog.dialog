@@ -1,0 +1,112 @@
+{
+  "$kind": "Microsoft.AdaptiveDialog",
+  "$designer": {
+    "id": "xckZRC",
+    "name": "CheckOrderDialog",
+    "comment": ""
+  },
+  "autoEndDialog": true,
+  "defaultResultProperty": "dialog.result",
+  "triggers": [
+    {
+      "$kind": "Microsoft.OnBeginDialog",
+      "$designer": {
+        "name": "BeginDialog",
+        "description": "",
+        "id": "28zA6s"
+      },
+      "actions": [
+        {
+          "$kind": "Microsoft.TextInput",
+          "$designer": {
+            "id": "NyPL0E"
+          },
+          "disabled": false,
+          "maxTurnCount": 3,
+          "alwaysPrompt": false,
+          "allowInterruptions": false,
+          "unrecognizedPrompt": "",
+          "invalidPrompt": "",
+          "prompt": "${TextInput_Prompt_NyPL0E()}",
+          "property": "dialog.ordernumber"
+        },
+        {
+          "$kind": "Microsoft.HttpRequest",
+          "$designer": {
+            "id": "wDyU4t"
+          },
+          "resultProperty": "dialog.ordercontentreview",
+          "method": "POST",
+          "url": "https://oceansmartcontentmoderator.cognitiveservices.azure.com/contentmoderator/moderate/v1.0/ProcessText/Screen?autocorrect=false&PII=true&classify=True",
+          "body": "=dialog.ordernumber",
+          "headers": {
+            "Ocp-Apim-Subscription-Key": "52bb1cfd60624b75a6391b897cb1cc7e"
+          },
+          "contentType": "text/plain",
+          "responseType": "json"
+        },
+        {
+          "$kind": "Microsoft.IfCondition",
+          "$designer": {
+            "id": "XiAF7u"
+          },
+          "condition": "=dialog.ordercontentreview.content.Classification.ReviewRecommended",
+          "actions": [
+            {
+              "$kind": "Microsoft.SendActivity",
+              "$designer": {
+                "id": "tmxbAP"
+              },
+              "activity": "${SendActivity_tmxbAP()}"
+            },
+            {
+              "$kind": "Microsoft.RepeatDialog",
+              "$designer": {
+                "id": "lM1hQF"
+              },
+              "activityProcessed": true
+            }
+          ],
+          "elseActions": [
+            {
+              "$kind": "Microsoft.IfCondition",
+              "$designer": {
+                "id": "qNDBUH"
+              },
+              "condition": "=dialog.ordercontentreview.content.PII != null",
+              "elseActions": [
+                {
+                  "$kind": "Microsoft.SendActivity",
+                  "$designer": {
+                    "id": "Pgo2KJ",
+                    "comment": ""
+                  },
+                  "activity": "${SendActivity_Pgo2KJ()}"
+                }
+              ],
+              "actions": [
+                {
+                  "$kind": "Microsoft.SendActivity",
+                  "$designer": {
+                    "id": "S6IEUo"
+                  },
+                  "activity": "${SendActivity_S6IEUo()}"
+                },
+                {
+                  "$kind": "Microsoft.RepeatDialog",
+                  "$designer": {
+                    "id": "kIoNAS"
+                  },
+                  "activityProcessed": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "generator": "CheckOrderDialog.lg",
+  "recognizer": "CheckOrderDialog.lu.qna",
+  "id": "CheckOrderDialog"
+}

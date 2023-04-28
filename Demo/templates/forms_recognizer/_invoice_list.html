@@ -1,0 +1,70 @@
+{% load tz static %}
+{% get_current_timezone as TIME_ZONE %}
+
+<div class="flex flex-col">
+  <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+    <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
+      <div class="overflow-hidden sm:rounded-lg shadow-md">
+        <table class="min-w-full">
+          <thead class="bg-emerald-600 text-gray-100">
+          <tr>
+            <th scope="col"
+                class="text-xs font-medium px-6 py-3 text-left uppercase tracking-wider">
+              ID
+            </th>
+            <th scope="col"
+                class="text-xs font-medium px-6 py-3 text-left uppercase tracking-wider">
+              File
+            </th>
+            <th scope="col"
+                class="text-xs font-medium px-6 py-3 text-left uppercase tracking-wider">
+              Date Uploaded
+            </th>
+            <th scope="col"
+                class="text-xs font-medium px-6 py-3 text-left uppercase tracking-wider">
+              FR API
+            </th>
+            <th scope="col"
+                class="text-xs font-medium px-6 py-3 text-left uppercase tracking-wider">
+              Status
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for invoice in invoices %}
+          <tr class="bg-white border-b">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+              {{ invoice.id }}
+            </td>
+            <td class="text-sm text-gray-500 px-6 py-4 whitespace-nowrap">
+              <a href="{{ invoice.uploaded_file.url }}">{{ invoice.filename }}</a>
+            </td>
+            <td class="text-sm text-gray-500 px-6 py-4 whitespace-nowrap">
+              {{ invoice.date_created }} {{ TIME_ZONE }}
+            </td>
+            <td class="text-sm text-gray-500 px-6 py-4 whitespace-nowrap">
+              {{ invoice.invoice_type }}
+            </td>
+            <td class="text-sm text-gray-500 px-6 py-4 whitespace-nowrap">
+              {% if invoice.status == 'Completed' %}
+                <a class="text-blue-600 hover:text-blue-900 dark:text-blue-500 dark:hover:underline" href="{% url 'forms_recognizer:invoice_details' invoice.pk %}">
+                  {{ invoice.status }}
+                </a>
+              {% elif invoice.status == 'Error' %}
+                <button class="text-red-600 font-medium text-sm"
+                        type="button" data-modal-toggle="error-modal-{{ forloop.counter0 }}">
+                  {{ invoice.status }}
+                </button>
+              {% else %}
+                <img alt="processing" src="{% static "images/spinner.gif" %}" class="h-5 inline">
+                {{ invoice.status }}
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+[import](common.lg)
+
+# SendActivity_HelpOverview()
+[Activity
+    Text = ${SendActivity_HelpOverview_text()}
+]
+
+# SendActivity_HelpOverview_text()
+
+> Imported: 95949fcc5eb2077f9cffd10817a11340
+- I can check on your order status for you if you would like, all you need to do is ask. 

@@ -1,0 +1,56 @@
+<div class="grid grid-cols-1 gap-4 px-4">
+  <div class="flex flex-col gap-4">
+    <p>Found {{ results|length }} documents...</p>
+    {% for result in results %}
+    <div class="w-full rounded-sm bg-white shadow p-3 gap-2">
+      <div class="flex">
+        <!-- Icon -->
+        <div class="flex-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="#15803D">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/>
+          </svg>
+        </div>
+        <!-- Title -->
+        <div class="flex-auto">
+          <a href="{% url 'cognitive_search:view' result.metadata_storage_path %}"><p class="text-green-700 font-semibold pt-1 pl-4"> {{ result.metadata_storage_name }} </p></a>
+        </div>
+      </div>
+      <!-- Description -->
+      <div class="pt-4 text-sm text-gray-800 font-light">
+        <p>
+          <span class="font-bold">Confidence Score:</span>
+          {% for k, v in result.items %}
+            {% if k == '@search.score' %}
+              {{ v }}
+            {% endif %}
+          {% endfor %}
+        </p>
+        <p>
+          <span class="font-bold">Content:</span>
+            {{ result.merged_content|truncatewords:60 }}
+        </p>
+        <p>
+          <span class="font-bold">People:</span>
+            {% for p in result.people %}
+              {{ p }}{% if not forloop.last%}, {% endif %}
+            {% endfor %}
+        </p>
+        <p>
+          <span class="font-bold">Locations:</span>
+            {% for l in result.locations %}
+              {{ l }}{% if not forloop.last%}, {% endif %}
+            {% endfor %}
+        </p>
+      </div>
+    </div>
+    {% empty %}
+    <div class="rounded-sm w-11/12 bg-white shadow p-3 gap-2 items-center">
+      <div class="">
+        <p class="text-sm text-gray-800 font-light">No results, please enter a query in the search box at the top of the
+          page.</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>

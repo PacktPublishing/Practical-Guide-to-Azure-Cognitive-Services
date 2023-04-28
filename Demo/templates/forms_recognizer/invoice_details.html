@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load get_attrs %}
+{% block content %}
+<div class="container mx-auto">
+  {% for invoice in invoices.invoices.all %}
+  <div class="grid grid-cols-2 p-4">
+    <div>
+      <h1 class="text-xl pb-4">Form Recognizer</h1>
+      <p>Viewing Invoice - {{ invoice.pk }}</p>
+    </div>
+    <div>
+      <button
+          class="w-full inline-block py-2 px-4 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75">
+        Send To ERP
+      </button>
+    </div>
+  </div>
+  <div class="grid md:grid-cols-2 p-4 grid-cols-1">
+    <div class="pb-4">
+      <div class="flex flex-wrap">
+        <div class="flex-none pb-4 pr-4 md:flex-1 w-96">
+          <p class="font-semibold">Customer:</p>
+          <p>{{ invoice.customer_name }}</p>
+          <p>{{ invoice.customer_address }}</p>
+          <p>{{ invoice.customer_address_recipient }}</p>
+          <p>{{ invoice.customer_id }}</p>
+        </div>
+        <div class="flex-none md:flex-1">
+          <p class="font-semibold">Vendor:</p>
+          <p>{{ invoice.vendor_name }}</p>
+          <p>{{ invoice.vendor_address_recipient }}</p>
+          <p>{{ invoice.vendor_address }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="pb-4">
+      <div class="flex flex-nowrap justify-end">
+        <div class="flex-none md:flex-auto font-semibold text-left md:text-right pr-4">
+          <p>Date:</p>
+          <p>Due Date:</p>
+          <p>Invoice ID:</p>
+          <p>Invoice Total:</p>
+          <p>Subtotal:</p>
+          <p>Sales Tax:</p>
+          <p>Amount Due:</p>
+          <p>Purchase Order:</p>
+          <p>Prev. Unpaid Balance:</p>
+        </div>
+        <div class="flex-1 md:flex-none">
+          <p>{{ invoice.invoice_date }}</p>
+          <p>{{ invoice.due_date }}</p>
+          <p>{{ invoice.invoice_id }}</p>
+          <p>{{ invoice.invoice_total }}</p>
+          <p>{{ invoice.sub_total }}</p>
+          <p>{{ invoice.total_tax }}</p>
+          <p>{{ invoice.amount_due }}</p>
+          <p>{{ invoice.purchase_order }}</p>
+          <p>{{ invoice.previous_unpaid_balance }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="py-b md:col-span-2 md: pt-4">
+      <div class="flex flex-wrap">
+        <div class="flex-none pb-4 pr-4 md:flex-auto">
+          <p class="font-semibold">Billing Address:</p>
+          <p>{{ invoice.billing_address_recipient }}</p>
+          <p>{{ invoice.billing_address }}</p>
+        </div>
+        <div class="flex-none pb-4 pr-4 md:flex-auto">
+          <p class="font-semibold">Remittance Address:</p>
+          <p>{{ invoice.remittance_address_recipient }}</p>
+          <p>{{ invoice.remittance_address }}</p>
+        </div>
+        <div class="flex-none pb-4 pr-4 md:flex-auto">
+          <p class="font-semibold">Service Address:</p>
+          <p>{{ invoice.service_address_recipient }}</p>
+          <p>{{ invoice.service_address }}</p>
+          <p>Service Start: {{ invoice.service_start_date }}</p>
+          <p>Service End: {{ invoice.service_end_date }}</p>
+        </div>
+        <div class="flex-none pb-4 pr-4 md:flex-auto">
+          <p class="font-semibold">Shipping Address:</p>
+          <p>{{ invoice.shipping_address_recipient }}</p>
+          <p>{{ invoice.shipping_address }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="md:col-span-2">
+      {% if 'pdf' in extension %}
+      <iframe src="{{ invoices.uploaded_file.url }}" width="100%" height="1062px">
+      </iframe>
+      {% else %}
+      <img class="border mx-auto" style="height: 1062px;" src="{{ invoices.uploaded_file.url }}"
+           alt="{{ invoices.filename }}">
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

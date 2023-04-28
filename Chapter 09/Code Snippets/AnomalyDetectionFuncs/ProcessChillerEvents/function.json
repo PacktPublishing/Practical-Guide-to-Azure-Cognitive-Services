@@ -1,0 +1,19 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req"
+    },
+    {
+      "name": "outputmessage",
+      "type": "table",
+      "tableName": "tempanomalyresults",
+      "partitionKey": "results",
+      "connection": "AzureWebJobsStorage",
+      "direction": "out"    
+    }
+
+  ]
+}

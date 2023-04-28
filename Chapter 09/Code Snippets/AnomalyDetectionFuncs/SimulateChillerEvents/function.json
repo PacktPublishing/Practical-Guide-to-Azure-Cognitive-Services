@@ -1,0 +1,27 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "name": "mytimer",
+      "type": "timerTrigger",
+      "direction": "in",
+      "schedule": "10 * * * * *"
+    },
+    {
+      "name": "tempoverride",
+      "type": "table",
+      "tableName": "temperatureoverride",
+      "partitionKey": "temps",
+      "take": "1",
+      "connection": "AzureWebJobsStorage",
+      "direction": "in"
+    },    
+    {
+      "type": "eventHub",
+      "name": "$return",
+      "eventHubName": "chillertemps",
+      "connection": "chillertemp_sender_connectionstring",
+      "direction": "out"
+  }
+  ]
+}

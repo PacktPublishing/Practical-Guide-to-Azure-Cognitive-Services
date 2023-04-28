@@ -1,0 +1,16 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=ch10oceansmart;AccountKey=vIrQafqJMMx8k631H6hm/HiEILM3OciY73QZCzy5jfwNZdjZSe3jatUgOd9eZmYYe2WvErOmRS6Az9/bF99djA==;EndpointSuffix=core.windows.net",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "FUNCTIONS_EXTENSION_VERSION": "~4",
+    "oceansmartst_STORAGE": "DefaultEndpointsProtocol=https;AccountName=ch10oceansmart;AccountKey=vIrQafqJMMx8k631H6hm/HiEILM3OciY73QZCzy5jfwNZdjZSe3jatUgOd9eZmYYe2WvErOmRS6Az9/bF99djA==;EndpointSuffix=core.windows.net",
+    "prediction_endpoint": "https://eastus2.api.cognitive.microsoft.com/",
+    "prediction_key": "<prediction_key>",
+    "training_endpoint": "https://eastus2.api.cognitive.microsoft.com/",
+    "training_key": "<training_key>",
+    "vision_project_id": "95de605d-bf06-42f9-8671-70d746650cdc",
+    "vision_model_name": "CurrentModel",
+    "prediction_resource": "/subscriptions/b9cb82ad-f6fc-425b-aeb3-7d74d86db771/resourceGroups/Chapter10/providers/Microsoft.CognitiveServices/accounts/Chapter-10-pred" 
+  }
+}

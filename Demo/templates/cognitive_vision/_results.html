@@ -1,0 +1,122 @@
+<div class="grid grid-cols-1 gap-4 px-4">
+  <div class="flex flex-col gap-4">
+    <div class="overflow-hidden sm:rounded-lg shadow-md">
+      <table class="min-w-full">
+        <thead class="bg-emerald-600 text-gray-100">
+        <tr>
+          <th scope="col"
+              class="text-xs font-medium px-6 py-3 text-left uppercase tracking-wider">
+            Image
+          </th>
+          <th scope="col"
+              class="text-xs font-medium px-6 py-3 text-left uppercase tracking-wider">
+            File Name
+          </th>
+          <th scope="col"
+              class="text-xs font-medium px-6 py-3 text-left uppercase tracking-wider">
+            Good
+          </th>
+          <th scope="col"
+              class="text-xs font-medium px-6 py-3 text-left uppercase tracking-wider">
+            Bad
+          </th>
+          <th scope="col"
+              class="text-xs font-medium px-6 py-3 text-left uppercase tracking-wider">
+            Date Scanned
+          </th>
+          <th scope="col"
+              class="text-xs font-medium px-6 py-3 text-left uppercase tracking-wider">
+            Status
+          </th>
+          <th scope="col"
+              class="text-xs font-medium px-6 py-3 text-left uppercase tracking-wider">
+            Actions
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for result in results %}
+        <tr class="bg-white border-b">
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            <a href="{{ result.get_image }}">
+              <img src="{{ result.get_image }}" width="100" alt="{{ result.get_image }}"
+                   class="p-1 bg-white border rounded m-auto">
+            </a>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            {{ result.file_name }}
+          </td>
+          <td class="text-sm text-gray-500 px-6 py-4 whitespace-nowrap">
+            {{ result.good }}
+          </td>
+          <td class="text-sm text-gray-500 px-6 py-4 whitespace-nowrap">
+            {{ result.bad }}
+          </td>
+          <td class="text-sm text-gray-500 px-6 py-4 whitespace-nowrap">
+            {{ result.date_created }}
+          </td>
+          <td class="text-sm text-gray-500 px-6 py-4 whitespace-nowrap">
+            {% if result.passed == True %}
+            Passed
+            {% else %}
+            Failed
+            {% endif %}
+          </td>
+          <td class="text-sm text-gray-500 px-6 py-4 whitespace-nowrap">
+            <button type="button"
+              class="inline-block px-4 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md
+                hover:bg-green-700 hover:shadow-md
+                focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75
+                active:bg-green-800 active:shadow-md transition duration-150 ease-in-out"
+              data-bs-toggle="modal" data-bs-target="#reclassifyModal{{ result.id }}">
+              Reclassify
+            </button>
+          </td>
+        </tr>
+        {% empty %}
+        <tr class="">
+          <td colspan="5" class="p-2 text-sm text-gray-800 font-light">No results, please wait for results to show as
+            they come in.
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% for result in results %}
+<div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
+     id="reclassifyModal{{ result.id }}" tabindex="-1" aria-labelledby="reclassifyModal{{ result.id }}" aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
+    <div
+        class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
+      <div
+          class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
+        <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
+          Reclassify Image
+        </h5>
+        <button type="button"
+                class="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
+                data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body relative p-4">
+        <p>Do you want to reclassify the image <span class="font-bold">{{ result.file_name }}</span>?</p>
+      </div>
+      <div
+          class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
+        <button type="button"
+                class="inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"
+                data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button"
+                class="inline-block px-6 py-2.5 bg-green-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out ml-1">
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}

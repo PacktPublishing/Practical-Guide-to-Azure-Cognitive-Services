@@ -1,0 +1,26 @@
+{
+    "name": "chapter09asa",
+    "startFile": "Transformation.asaql",
+    "configurations": [
+        {
+            "filePath": "Functions/getCurrentTime.js.json",
+            "subType": "JSFunction"
+        },
+        {
+            "filePath": "Functions/getEventDetails.js.json",
+            "subType": "JSFunction"
+        },
+        {
+            "filePath": "JobConfig.json",
+            "subType": "JobConfig"
+        },
+        {
+            "filePath": "Inputs/chillertemps.json",
+            "subType": "Input"
+        },
+        {
+            "filePath": "Outputs/ProcessEventsFunction.json",
+            "subType": "Output"
+        }
+    ]
+}

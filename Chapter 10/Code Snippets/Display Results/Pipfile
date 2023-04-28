@@ -1,0 +1,15 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+azure-storage-queue = "*"
+rich = "*"
+
+[dev-packages]
+pycodestyle = "*"
+autopep8 = "*"
+
+[requires]
+python_version = "3.9"

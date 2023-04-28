@@ -1,0 +1,11 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage" : "<connection string to storage account>",
+    "FUNCTIONS_WORKER_RUNTIME" : "python",
+    "chillertemp_sender_connectionstring" : "connection string to event hub with send policy",
+    "chillertemp_listener_connectionstring" : "connection string to event hub with listen policy",
+    "anomaly_detector_subscription_key" : "access key from amonaly detector cognitive service",
+    "anomaly_detector_endpoint" : "endpoint url from anomaly detector cognitive service"
+  }
+}

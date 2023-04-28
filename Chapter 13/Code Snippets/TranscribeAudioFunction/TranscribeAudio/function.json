@@ -1,0 +1,20 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "name": "newRecording",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "recordings/{name}",
+      "connection": "ch13_STORAGE"
+    },
+    {
+      "name": "outTable",
+      "type": "table",
+      "tableName": "transcriptionStatus",
+      "partitionKey": "partKey",
+      "connection": "ch13_STORAGE", 
+      "direction": "out"
+    }
+  ]
+}

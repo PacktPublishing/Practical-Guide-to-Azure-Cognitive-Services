@@ -1,0 +1,14 @@
+with eventgroups as (
+select window_count = count(*)
+        , window_start = (topone() over (order by EventEnqueuedUtcTime)).EventEnqueuedUtcTime
+        , window_end = (topone() over (order by EventEnqueuedUtcTime desc)).EventEnqueuedUtcTime
+        , details = collect(UDF.getEventDetails(date_utc, time_utc, temp_f))
+  from [chillertemps] timestamp by EventEnqueuedUtcTime
+ group by slidingwindow(minute, 15)
+having count(*) > 12
+)
+
+select eventgroups.*
+  into [ProcessEventsFunction]
+  from eventgroups
+-- where datediff(minute, topone() over (order by window_end desc limit duration(hour, 1)).window_end, UDF.getCurrentTime('s')) < 2

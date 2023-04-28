@@ -1,0 +1,320 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageAccounts_sacogsrch_name": {
+            "defaultValue": "sacogsrch",
+            "type": "String"
+        },
+        "searchServices_cogsrch_oceansmart_name": {
+            "defaultValue": "cogsrch-oceansmart",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Search/searchServices",
+            "apiVersion": "2021-04-01-preview",
+            "name": "[parameters('searchServices_cogsrch_oceansmart_name')]",
+            "location": "East US 2",
+            "sku": {
+                "name": "free"
+            },
+            "properties": {
+                "replicaCount": 1,
+                "partitionCount": 1,
+                "hostingMode": "Default",
+                "publicNetworkAccess": "Enabled",
+                "networkRuleSet": {
+                    "ipRules": [],
+                    "bypass": "None"
+                },
+                "encryptionWithCmk": {},
+                "disableLocalAuth": false,
+                "authOptions": {
+                    "apiKeyOnly": {}
+                },
+                "disabledDataExfiltrationOptions": [],
+                "semanticSearch": "disabled"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-08-01",
+            "name": "[parameters('storageAccounts_sacogsrch_name')]",
+            "location": "eastus2",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "defaultToOAuthAuthentication": false,
+                "allowCrossTenantReplication": true,
+                "minimumTlsVersion": "TLS1_2",
+                "allowBlobPublicAccess": true,
+                "allowSharedKeyAccess": true,
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "changeFeed": {
+                    "enabled": false
+                },
+                "restorePolicy": {
+                    "enabled": false
+                },
+                "containerDeleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 7
+                },
+                "cors": {
+                    "corsRules": []
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 7
+                },
+                "isVersioningEnabled": false
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "protocolSettings": {
+                    "smb": {}
+                },
+                "cors": {
+                    "corsRules": []
+                },
+                "shareDeleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 7
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/queueServices",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default/azureblob-skillset-image-projection')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_sacogsrch_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ],
+            "properties": {
+                "immutableStorageWithVersioning": {
+                    "enabled": false
+                },
+                "defaultEncryptionScope": "$account-encryption-key",
+                "denyEncryptionScopeOverride": false,
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default/cache')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_sacogsrch_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ],
+            "properties": {
+                "immutableStorageWithVersioning": {
+                    "enabled": false
+                },
+                "defaultEncryptionScope": "$account-encryption-key",
+                "denyEncryptionScopeOverride": false,
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default/enrichments')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_sacogsrch_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ],
+            "properties": {
+                "immutableStorageWithVersioning": {
+                    "enabled": false
+                },
+                "defaultEncryptionScope": "$account-encryption-key",
+                "denyEncryptionScopeOverride": false,
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default/files')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_sacogsrch_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ],
+            "properties": {
+                "immutableStorageWithVersioning": {
+                    "enabled": false
+                },
+                "defaultEncryptionScope": "$account-encryption-key",
+                "denyEncryptionScopeOverride": false,
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default/ms-az-search-indexercache-1eb1a79b-f6f5-4cab-8824-ac9bd3c57ae0')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_sacogsrch_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ],
+            "properties": {
+                "immutableStorageWithVersioning": {
+                    "enabled": false
+                },
+                "defaultEncryptionScope": "$account-encryption-key",
+                "denyEncryptionScopeOverride": false,
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default/ms-az-search-indexercache-a4efab8e-b100-4bb2-9821-8b4b2a02806e')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_sacogsrch_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ],
+            "properties": {
+                "immutableStorageWithVersioning": {
+                    "enabled": false
+                },
+                "defaultEncryptionScope": "$account-encryption-key",
+                "denyEncryptionScopeOverride": false,
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default/azureblobSkillsetDocument')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/tableServices', parameters('storageAccounts_sacogsrch_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default/azureblobSkillsetEntities')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/tableServices', parameters('storageAccounts_sacogsrch_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default/azureblobSkillsetImages')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/tableServices', parameters('storageAccounts_sacogsrch_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default/azureblobSkillsetKeyPhrases')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/tableServices', parameters('storageAccounts_sacogsrch_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default/MsAzSearchIndexerCacheIndex1eb1a79bf6f54cab8824ac9bd3c57ae0')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/tableServices', parameters('storageAccounts_sacogsrch_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+            "apiVersion": "2021-08-01",
+            "name": "[concat(parameters('storageAccounts_sacogsrch_name'), '/default/MsAzSearchIndexerCacheIndexa4efab8eb1004bb298218b4b2a02806e')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/tableServices', parameters('storageAccounts_sacogsrch_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sacogsrch_name'))]"
+            ]
+        }
+    ]
+}

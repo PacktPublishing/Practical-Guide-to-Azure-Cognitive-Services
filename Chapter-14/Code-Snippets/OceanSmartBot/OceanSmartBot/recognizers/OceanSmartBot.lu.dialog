@@ -1,0 +1,8 @@
+{
+  "$kind": "Microsoft.MultiLanguageRecognizer",
+  "id": "LUIS_OceanSmartBot",
+  "recognizers": {
+    "en-us": "OceanSmartBot.en-us.lu",
+    "": "OceanSmartBot.en-us.lu"
+  }
+}

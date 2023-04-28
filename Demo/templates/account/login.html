@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load account socialaccount %}
+
+{% block content %}
+  <section class="flex justify-center items-center h-screen bg-gray-100">
+    <div class="max-w-md w-full bg-white rounded p-6 space-y-4">
+      <div class="mb-4">
+        <p class="text-gray-600">Sign In</p>
+        <h2 class="text-xl font-bold">Welcome to Ocean Smart</h2>
+      </div>
+      <form class="login" method="POST" action="{% url 'account_login' %}">
+        {% csrf_token %}
+        <div>
+          <label class="hidden" for="id_login">Username:</label>
+          <input class="w-full mb-4 p-4 text-sm bg-gray-50 focus:outline-none border border-gray-200 rounded text-gray-600"
+                 type="text" name="login" placeholder="Username" autocomplete="username" maxlength="150" required
+                 id="id_login">
+        </div>
+        <div>
+          <label class="hidden" for="id_password">Password:</label>
+          <input class="w-full mb-4 p-4 text-sm bg-gray-50 focus:outline-none border border-gray-200 rounded text-gray-600"
+                 type="password" name="password" placeholder="Password" autocomplete="current-password" required
+                 id="id_password">
+        </div>
+        {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+        {% endif %}
+        {#        <a class="text-sm text-green-600 hover:underline"#}
+        {#           href="{% url 'account_reset_password' %}">Forgot Password?</a>#}
+        <button
+            class="w-full py-4 bg-green-600 hover:bg-green-700 rounded text-sm font-bold text-gray-50 transition duration-200"
+            type="submit">Sign In</button>
+      </form>
+    </div>
+  </section>
+{% endblock content %}

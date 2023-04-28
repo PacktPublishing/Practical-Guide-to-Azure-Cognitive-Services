@@ -1,0 +1,21 @@
+{
+    "Name": "chillertemps",
+    "Type": "Data Stream",
+    "DataSourceType": "Event Hub",
+    "EventHubProperties": {
+        "ServiceBusNamespace": "oceansmart-chapter9",
+        "EventHubName": "chillertemps",
+        "SharedAccessPolicyName": "chapter09asa_chillertemps_policy",
+        "SharedAccessPolicyKey": "********",
+        "ConsumerGroupName": "",
+        "AuthenticationMode": "ConnectionString"
+    },
+    "DataSourceCredentialDomain": "3390accd-0598-4920-91c6-2f304f03330e.StreamAnalystics",
+    "Serialization": {
+        "Type": "Json",
+        "Encoding": "UTF8"
+    },
+    "PartitionKey": "",
+    "CompressionType": "None",
+    "ScriptType": "Input"
+}

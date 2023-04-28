@@ -1,0 +1,30 @@
+[import](common.lg)
+
+# TextInput_Prompt_NyPL0E()
+[Activity
+    Text = ${TextInput_Prompt_NyPL0E_text()}
+]
+
+# TextInput_Prompt_NyPL0E_text()
+- What is your order number?
+# SendActivity_tmxbAP_text()
+- Hmmm... It looksl ike you included some harmful or offensive words. Let's stick to the order numbrer so we can check that status for you.
+# SendActivity_tmxbAP()
+[Activity
+    Text = ${SendActivity_tmxbAP_text()}
+]
+
+# SendActivity_Pgo2KJ()
+[Activity
+    Text = ${SendActivity_Pgo2KJ_text()}
+]
+
+# SendActivity_S6IEUo()
+[Activity
+    Text = ${SendActivity_S6IEUo_text()}
+]
+
+# SendActivity_S6IEUo_text()
+- It looks like you may have included some personal informtion. All we need to check on your order is the order number.
+# SendActivity_Pgo2KJ_text()
+- Order number ${dialog.ordernumber} has shipped and is on the way! 

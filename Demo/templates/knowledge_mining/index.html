@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mx-auto">
+  <div class="grid grid-cols-1 p-4">
+    <h1 class="text-xl pb-4">Knowledge Mining</h1>
+    <p>Input a query and select a document type to search within that media.</p>
+  </div>
+  <form hx-post="{% url 'cognitive_search:search' %}" hx-target="#results" hx-indicator="#indicator"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' >
+    <div class="flex p-4">
+      <div class="w-1/2">
+        <input type="search" placeholder="Search Here..." name="query" hx-post="{% url 'cognitive_search:search' %}" hx-target="#results" hx-indicator="#indicator"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'hx-trigger="keyup changed delay:500ms, search"
+               class="w-full py-3 px-4 rounded shadow font-thin focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 focus:shadow-lg focus:shadow-slate-200 duration-100 shadow-gray-100">
+        
+        
+  <div class="mt-3">
+    <select class="form-select form-select-lg mb-3
+      appearance-none
+      block
+      w-full
+      px-4
+      py-2
+      text-xl
+      text-gray-700
+      bg-white bg-clip-padding bg-no-repeat
+      shadow
+      font-thin
+      rounded
+      transition
+      ease-in-out
+      m-0
+      focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 focus:shadow-lg focus:shadow-slate-200 shadow-gray-100" aria-label=".form-select-lg example">
+        <option selected>Documents</option>
+        <option value="1">Audio</option>
+        <option value="2">Images</option>
+    </select>
+  </div>
+      
+      </div>
+      <div class="pl-5 w-1/5">
+        <button type="submit"
+                class="w-full py-3 px-4 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75">
+          Search
+        </button>
+      </div>
+    </div>
+  </form>
+  <div id="indicator" class="htmx-indicator">
+    <div class="grid grid-cols-1 gap-4 px-4">
+      <div class="flex flex-col gap-4">
+        Searching...
+      </div>
+    </div>
+  </div>
+  <div id="results">
+    {% include 'cognitive_search/_results.html' %}
+  </div>
+</div>
+{% endblock %}

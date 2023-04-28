@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "accounts_form_processor_name": {
+            "defaultValue": "form-processor",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "apiVersion": "2021-10-01",
+            "name": "[parameters('accounts_form_processor_name')]",
+            "location": "eastus",
+            "sku": {
+                "name": "S0"
+            },
+            "kind": "FormRecognizer",
+            "identity": {
+                "type": "None"
+            },
+            "properties": {
+                "customSubDomainName": "[parameters('accounts_form_processor_name')]",
+                "networkAcls": {
+                    "defaultAction": "Allow",
+                    "virtualNetworkRules": [],
+                    "ipRules": []
+                },
+                "publicNetworkAccess": "Enabled"
+            }
+        }
+    ]
+}

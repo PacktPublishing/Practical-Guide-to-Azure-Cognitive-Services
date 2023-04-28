@@ -1,0 +1,13 @@
+{
+    "Name": "ProcessEventsFunction",
+    "DataSourceType": "Azure Function",
+    "AzureFunctionProperties": {
+        "FunctionAppName": "ch09-functions",
+        "FunctionName": "ProcessChillerEvents",
+        "ApiKey": "default",
+        "MaxBatchSize": 262144,
+        "MaxBatchCount": 1
+    },
+    "DataSourceCredentialDomain": "3390accd-0598-4920-91c6-2f304f03330e.StreamAnalystics",
+    "ScriptType": "Output"
+}

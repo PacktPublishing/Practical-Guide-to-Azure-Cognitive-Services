@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mx-auto">
+  <div class="grid grid-cols-1 p-4">
+    <h1 class="text-xl pb-4">Cognitive Search</h1>
+    <p>Viewing result {{result.metadata_storage_name }}</p>
+  </div>
+  <div class="md:col-span-2">
+    <a class="text-blue-600 visited:text-purple-600" href="{{ result.storage_path }}">
+      Link to file: {{ result.metadata_storage_name }}
+    </a>
+  </div>
+  <div class="md:col-span-2">
+    {% if 'pdf' in result.extension %}
+    <iframe src="{{ result.storage_path }}" width="100%" height="1062px">
+    </iframe>
+    {% else %}
+    <img class="border mx-auto" style="height: 1062px;" src="{{ result.storage_path }}"
+         alt="{{ result.storage_path }}">
+    {% endif %}
+  </div>
+  <div class="md:col-span-2">
+    Relevant results:
+    {% include 'cognitive_search/_re_results.html' %}
+  </div>
+</div>
+{% endblock %}

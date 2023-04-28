@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mx-auto">
+    <div class="grid grid-cols-1 p-4">
+      <h1 class="text-xl pb-4">Form Recognizer</h1>
+      <p>Here we can upload documents to be scanned or see previous scans.</p>
+    </div>
+    <div class="grid grid-cols-2 p-4">
+      <div class="bg-white px-2">
+        <div class="max-w-md mx-auto rounded-lg overflow-hidden md:max-w-xl">
+          <div class="w-full text-center p-3" hx-target="this" hx-swap="outerHTML">
+            <button hx-get="{% url 'forms_recognizer:upload_invoice' %}"
+                    class="w-full inline-block py-2 px-4 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75">
+              Upload Invoice
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white px-2">
+        <div class="max-w-md mx-auto rounded-lg overflow-hidden md:max-w-xl">
+          <div class="w-full text-center p-3" hx-target="this" hx-swap="outerHTML">
+            <button hx-get="{% url 'forms_recognizer:upload_general' %}"
+                    class="w-full inline-block py-2 px-4 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75">
+              Upload General Form
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 p-4">
+      <div hx-get="{% url 'forms_recognizer:update_invoice_list' %}" hx-trigger="refreshTable, every 10s">
+        {% include 'forms_recognizer/_invoice_list.html' %}
+      </div>
+      {% for invoice in invoices %}
+            {% include "forms_recognizer/_error_modal.html" %}
+      {% endfor %}
+    </div>
+  </div>
+
+{% endblock %}

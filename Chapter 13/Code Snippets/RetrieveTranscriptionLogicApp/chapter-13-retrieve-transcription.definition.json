@@ -1,0 +1,446 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_chapter_13_retrieve_transcription_name": {
+            "defaultValue": "chapter-13-retrieve-transcription",
+            "type": "string"
+        },
+        "workflows_chapter-13-retrieve-transcription_parameters_$connections": {
+            "defaultValue": {
+                "azureblob": {
+                    "connectionId": "/subscriptions/b9cb82ad-f6fc-425b-aeb3-7d74d86db771/resourceGroups/Chapter13/providers/Microsoft.Web/connections/azureblob",
+                    "connectionName": "azureblob",
+                    "id": "/subscriptions/b9cb82ad-f6fc-425b-aeb3-7d74d86db771/providers/Microsoft.Web/locations/eastus2/managedApis/azureblob"
+                },
+                "azuretables": {
+                    "connectionId": "/subscriptions/b9cb82ad-f6fc-425b-aeb3-7d74d86db771/resourceGroups/Chapter13/providers/Microsoft.Web/connections/azuretables",
+                    "connectionName": "azuretables",
+                    "id": "/subscriptions/b9cb82ad-f6fc-425b-aeb3-7d74d86db771/providers/Microsoft.Web/locations/eastus2/managedApis/azuretables"
+                }
+            },
+            "type": "Object"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-07-01",
+            "dependsOn": [],
+            "location": "eastus2",
+            "name": "[parameters('workflows_chapter_13_retrieve_transcription_name')]",
+            "properties": {
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {
+                                "azureblob": {
+                                    "connectionId": "/subscriptions/b9cb82ad-f6fc-425b-aeb3-7d74d86db771/resourceGroups/Chapter13/providers/Microsoft.Web/connections/azureblob",
+                                    "connectionName": "azureblob",
+                                    "id": "/subscriptions/b9cb82ad-f6fc-425b-aeb3-7d74d86db771/providers/Microsoft.Web/locations/eastus2/managedApis/azureblob"
+                                },
+                                "azuretables": {
+                                    "connectionId": "/subscriptions/b9cb82ad-f6fc-425b-aeb3-7d74d86db771/resourceGroups/Chapter13/providers/Microsoft.Web/connections/azuretables",
+                                    "connectionName": "azuretables",
+                                    "id": "/subscriptions/b9cb82ad-f6fc-425b-aeb3-7d74d86db771/providers/Microsoft.Web/locations/eastus2/managedApis/azuretables"
+                                }
+                            },
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "Recurrence": {
+                            "recurrence": {
+                                "frequency": "Second",
+                                "interval": 30
+                            },
+                            "evaluatedRecurrence": {
+                                "frequency": "Second",
+                                "interval": 30
+                            },
+                            "type": "Recurrence"
+                        }
+                    },
+                    "actions": {
+                        "For_each": {
+                            "foreach": "@body('GetNewEntities')?['value']",
+                            "actions": {
+                                "CheckTranscriptionStatus": {
+                                    "runAfter": {
+                                        "GetTranscriptionStatus": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "cases": {
+                                        "Failed": {
+                                            "case": "Failed",
+                                            "actions": {
+                                                "ComposeNewEntityFailure": {
+                                                    "runAfter": {},
+                                                    "type": "Compose",
+                                                    "inputs": {
+                                                        "fileName": "@{items('For_each')['fileName']}",
+                                                        "status": "failed",
+                                                        "statusCheckCount": "@item('For_each').statusCheckCount",
+                                                        "transcriptionId": "@{items('For_each')['transcriptionId']}"
+                                                    }
+                                                },
+                                                "SetVarNewEntityFailure": {
+                                                    "runAfter": {
+                                                        "ComposeNewEntityFailure": [
+                                                            "Succeeded"
+                                                        ]
+                                                    },
+                                                    "type": "SetVariable",
+                                                    "inputs": {
+                                                        "name": "newEntity",
+                                                        "value": "@outputs('ComposeNewEntityFailure')"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "Success": {
+                                            "case": "Succeeded",
+                                            "actions": {
+                                                "CompseNewEntitySuccess": {
+                                                    "runAfter": {
+                                                        "ForEachContentFile": [
+                                                            "Succeeded"
+                                                        ]
+                                                    },
+                                                    "type": "Compose",
+                                                    "inputs": {
+                                                        "fileName": "@{items('For_each')['fileName']}",
+                                                        "status": "processed",
+                                                        "statusCheckCount": "@items('For_each').statusCheckCount",
+                                                        "transcriptionId": "@{items('For_each')['transcriptionId']}"
+                                                    }
+                                                },
+                                                "ForEachContentFile": {
+                                                    "foreach": "@body('GetTranscriptionFiles').values",
+                                                    "actions": {
+                                                        "CheckFileKind": {
+                                                            "actions": {
+                                                                "Create_blob_(V2)": {
+                                                                    "runAfter": {
+                                                                        "GetTranscription": [
+                                                                            "Succeeded"
+                                                                        ]
+                                                                    },
+                                                                    "type": "ApiConnection",
+                                                                    "inputs": {
+                                                                        "body": "@body('GetTranscription')",
+                                                                        "headers": {
+                                                                            "ReadFileMetadataFromServer": true
+                                                                        },
+                                                                        "host": {
+                                                                            "connection": {
+                                                                                "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                                                            }
+                                                                        },
+                                                                        "method": "post",
+                                                                        "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/files",
+                                                                        "queries": {
+                                                                            "folderPath": "/transcriptions",
+                                                                            "name": "@{replace(replace(items('For_each').fileName, 'recordings/', ''), '.wav', '.json')}",
+                                                                            "queryParametersSingleEncoded": true
+                                                                        }
+                                                                    },
+                                                                    "runtimeConfiguration": {
+                                                                        "contentTransfer": {
+                                                                            "transferMode": "Chunked"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "GetTranscription": {
+                                                                    "runAfter": {
+                                                                        "SetVarTranscriptionUrl": [
+                                                                            "Succeeded"
+                                                                        ]
+                                                                    },
+                                                                    "type": "Http",
+                                                                    "inputs": {
+                                                                        "method": "GET",
+                                                                        "uri": "@variables('transcriptFileUrl')"
+                                                                    }
+                                                                },
+                                                                "SetVarTranscriptionUrl": {
+                                                                    "runAfter": {},
+                                                                    "type": "SetVariable",
+                                                                    "inputs": {
+                                                                        "name": "transcriptFileUrl",
+                                                                        "value": "@{items('ForEachContentFile').links.contentUrl}"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "runAfter": {},
+                                                            "expression": {
+                                                                "and": [
+                                                                    {
+                                                                        "equals": [
+                                                                            "@items('ForEachContentFile').kind",
+                                                                            "Transcription"
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "type": "If"
+                                                        }
+                                                    },
+                                                    "runAfter": {
+                                                        "GetTranscriptionFiles": [
+                                                            "Succeeded"
+                                                        ]
+                                                    },
+                                                    "type": "Foreach"
+                                                },
+                                                "GetTranscriptionFiles": {
+                                                    "runAfter": {},
+                                                    "type": "Http",
+                                                    "inputs": {
+                                                        "headers": {
+                                                            "Content-Type": "application/json",
+                                                            "Ocp-Apim-Subscription-Key": "64ff4dd8d9324785b9b4071e06b41077"
+                                                        },
+                                                        "method": "GET",
+                                                        "uri": "https://eastus2.api.cognitive.microsoft.com/speechtotext/v3.0/transcriptions/@{items('For_each')['transcriptionId']}/files"
+                                                    }
+                                                },
+                                                "SetVarNewEntitySuccess": {
+                                                    "runAfter": {
+                                                        "CompseNewEntitySuccess": [
+                                                            "Succeeded"
+                                                        ]
+                                                    },
+                                                    "type": "SetVariable",
+                                                    "inputs": {
+                                                        "name": "newEntity",
+                                                        "value": "@outputs('CompseNewEntitySuccess')"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "default": {
+                                        "actions": {
+                                            "Condition": {
+                                                "actions": {
+                                                    "ComposeNewEntityTimeOut": {
+                                                        "runAfter": {},
+                                                        "type": "Compose",
+                                                        "inputs": {
+                                                            "fileName": "@{items('For_each')['fileName']}",
+                                                            "status": "timedOut",
+                                                            "statusCheckCount": "@variables('statusCheckCount')",
+                                                            "transcriptionId": "@{items('For_each')['transcriptionId']}"
+                                                        }
+                                                    },
+                                                    "SetVarNewEntityTimeOut": {
+                                                        "runAfter": {
+                                                            "ComposeNewEntityTimeOut": [
+                                                                "Succeeded"
+                                                            ]
+                                                        },
+                                                        "type": "SetVariable",
+                                                        "inputs": {
+                                                            "name": "newEntity",
+                                                            "value": "@outputs('ComposeNewEntityTimeOut')"
+                                                        }
+                                                    }
+                                                },
+                                                "runAfter": {
+                                                    "UpdateStatusCheckCount": [
+                                                        "Succeeded"
+                                                    ]
+                                                },
+                                                "else": {
+                                                    "actions": {
+                                                        "ComposeNewEntityRetry": {
+                                                            "runAfter": {},
+                                                            "type": "Compose",
+                                                            "inputs": {
+                                                                "fileName": "@{items('For_each')['fileName']}",
+                                                                "status": "new",
+                                                                "statusCheckCount": "@variables('statusCheckCount')",
+                                                                "transcriptionId": "@{items('For_each')['transcriptionId']}"
+                                                            }
+                                                        },
+                                                        "SetVarNewEntityRetry": {
+                                                            "runAfter": {
+                                                                "ComposeNewEntityRetry": [
+                                                                    "Succeeded"
+                                                                ]
+                                                            },
+                                                            "type": "SetVariable",
+                                                            "inputs": {
+                                                                "name": "newEntity",
+                                                                "value": "@outputs('ComposeNewEntityRetry')"
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "expression": {
+                                                    "and": [
+                                                        {
+                                                            "greaterOrEquals": [
+                                                                "@variables('statusCheckCount')",
+                                                                6
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                "type": "If"
+                                            },
+                                            "UpdateStatusCheckCount": {
+                                                "runAfter": {},
+                                                "type": "SetVariable",
+                                                "inputs": {
+                                                    "name": "statusCheckCount",
+                                                    "value": "@add(items('For_each').statusCheckCount, 1)"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expression": "@body('GetTranscriptionStatus')['Status']",
+                                    "type": "Switch"
+                                },
+                                "GetTranscriptionStatus": {
+                                    "runAfter": {},
+                                    "type": "Http",
+                                    "inputs": {
+                                        "headers": {
+                                            "Content-Type": "application/json",
+                                            "Ocp-Apim-Subscription-Key": "64ff4dd8d9324785b9b4071e06b41077"
+                                        },
+                                        "method": "GET",
+                                        "uri": "https://eastus2.api.cognitive.microsoft.com/speechtotext/v3.0/transcriptions/@{items('For_each')['transcriptionId']}"
+                                    }
+                                },
+                                "Replace_Entity_(V2)": {
+                                    "runAfter": {
+                                        "SerVarNewEntityFailedRetrievingTranscript": [
+                                            "Succeeded",
+                                            "Skipped"
+                                        ]
+                                    },
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": "@variables('newEntity')",
+                                        "headers": {
+                                            "If-Match": "*"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['azuretables']['connectionId']"
+                                            }
+                                        },
+                                        "method": "put",
+                                        "path": "/v2/storageAccounts/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/tables/@{encodeURIComponent('transcriptionStatus')}/entities/etag(PartitionKey='@{encodeURIComponent(items('For_each').PartitionKey)}',RowKey='@{encodeURIComponent(items('For_each').rowKey)}')"
+                                    }
+                                },
+                                "SerVarNewEntityFailedRetrievingTranscript": {
+                                    "runAfter": {
+                                        "CheckTranscriptionStatus": [
+                                            "Failed",
+                                            "TimedOut"
+                                        ]
+                                    },
+                                    "type": "Compose",
+                                    "inputs": {
+                                        "fileName": "@{items('For_each')['fileName']}",
+                                        "status": "failed",
+                                        "statusCheckCount": "@items('For_each').statusCheckCount",
+                                        "transcriptionId": "@{items('For_each')['transcriptionId']}"
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "GetNewEntities": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Foreach"
+                        },
+                        "GetNewEntities": {
+                            "runAfter": {
+                                "Initialize_variable": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azuretables']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/v2/storageAccounts/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/tables/@{encodeURIComponent('transcriptionStatus')}/entities",
+                                "queries": {
+                                    "$filter": "status eq 'new'"
+                                }
+                            }
+                        },
+                        "Init_Variable_newEntity": {
+                            "runAfter": {
+                                "Init_Variable_statusCheckCount": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "newEntity",
+                                        "type": "object"
+                                    }
+                                ]
+                            }
+                        },
+                        "Init_Variable_statusCheckCount": {
+                            "runAfter": {},
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "statusCheckCount",
+                                        "type": "integer",
+                                        "value": 0
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable": {
+                            "runAfter": {
+                                "Init_Variable_newEntity": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "transcriptFileUrl",
+                                        "type": "string"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": "[parameters('workflows_chapter-13-retrieve-transcription_parameters_$connections')]"
+                    }
+                },
+                "state": "Enabled"
+            },
+            "scale": null,
+            "tags": {},
+            "type": "Microsoft.Logic/workflows"
+        }
+    ],
+    "variables": {}
+}

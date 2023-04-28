@@ -1,0 +1,51 @@
+<div class="grid grid-cols-1" id="general_form">
+  <div class="">
+    <span class="text-xl font-bold">Scan General Document</span>
+  </div>
+  <div class="p-4">
+    <form action="." method="post" enctype="multipart/form-data" hx-post="{{ request.path }}"
+          hx-encoding="multipart/form-data" hx-target="#general_form">
+      {% csrf_token %}
+      <div class="bg-white px-2">
+        <div class="max-w-md mx-auto rounded-lg overflow-hidden md:max-w-xl" x-data="{ files: null }">
+          <div class="w-full p-3">
+            <div
+                class="relative border-dotted h-48 rounded-lg border-dashed border-2 border-green-700 bg-gray-100 flex justify-center items-center">
+              <div class="absolute">
+                <div class="flex flex-col items-center">
+                  <i class="fa fa-folder-open fa-4x text-green-700"></i>
+                  <span class="block text-gray-400 font-normal"
+                        x-text="files ? files.map(file => file.name).join(', ') : 'Attach your files here'">
+                  </span>
+                </div>
+              </div>
+              <input type="file" class="h-full w-full opacity-0 cursor-pointer" name="uploaded_file" required
+                     id="id_uploaded_file" x-on:change="files = Object.values($event.target.files)">
+            </div>
+          </div>
+          <template x-if="files">
+            <div class="w-full p-3">
+              <button type="reset" @click="files = null" class="w-full bg-gray-300 text-black px-4 py-2 rounded-lg font-semibold hover:bg-gray-500 hover:text-white shadow-md focus:outline-none focus:ring-gray-500 focus:ring-opacity-75">
+                Reset
+              </button>
+            </div>
+          </template>
+          <div class="w-full p-3">
+            <button
+                class="w-full py-2 px-4 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75"
+                type="submit">
+              Upload
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  {% if messages %}
+  <div class="p-4">
+    {% for message in messages %}
+    <p>{{ message }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>

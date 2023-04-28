@@ -1,0 +1,9 @@
+
+GET https://eastus2.api.cognitive.microsoft.com/customvision/v3.3/Training/projects/95de605d-bf06-42f9-8671-70d746650cdc#/export HTTP/1.1
+Training-key: 7efbed33398d4514a74147763af2d8de
+
+###
+
+GET https://eastus2.api.cognitive.microsoft.com/customvision/v3.3/Training/projects/5bf56619-9cd0-43e4-a374-a201401c8228#/export HTTP/1.1
+Training-key: a1252c4f049546ed9ed41732caede7f3
+
