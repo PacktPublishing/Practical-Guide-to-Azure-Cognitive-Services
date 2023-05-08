@@ -54,9 +54,9 @@ With the following software and hardware list you can run all code files present
 
 
 ### Related products <Other books you may enjoy>
-* Serverless Analytics with Amazon Athena  [[Packt]](https://www.packtpub.com/product/serverless-analytics-with-amazon-athena/9781800562349) [[Amazon]](https://www.amazon.in/Serverless-Analytics-Amazon-Athena-semi-structured/dp/1800562349/ref=sr_1_1?keywords=Serverless+Analytics+with+Amazon+Athena&qid=1638757768&sr=8-1)
+* Azure Machine Learning Engineering  [[Packt]](https://www.packtpub.com/product/azure-machine-learning-engineering/9781803239309) [[Amazon]](https://www.amazon.in/Azure-Machine-Learning-Engineering-fine-tune/dp/1803239301/ref=sr_1_1?keywords=Azure+Machine+Learning+Engineering&sr=8-1)
   
-* Scalable Data Streaming with Amazon Kinesis  [[Packt]](https://www.packtpub.com/product/scalable-data-streaming-with-amazon-kinesis/9781800565401) [[Amazon]](https://www.amazon.in/Scalable-Data-Streaming-Amazon-Kinesis/dp/1800565402/ref=sr_1_1?keywords=Scalable+Data+Streaming+with+Amazon+Kinesis&qid=1638757818&sr=8-1)
+* Machine Learning in Microservices  [[Packt]](https://www.packtpub.com/product/machine-learning-in-microservices/9781804617748) [[Amazon]](https://www.amazon.in/Machine-Learning-Microservices-Productionizing-microservices/dp/1804617741/ref=sr_1_3?keywords=Machine+Learning+in+Microservices&sr=8-3)
   
 ## Get to Know the Author
 **Chris Seferlis** is a Technology Strategist at Microsoft. He has over 20 years of experience working in IT and using technology to accomplish business objectives. An MBA from UMass, a Part-Time Professor at Boston University and brings a mix of business acumen, with practical technology solutions.
