@@ -1,8 +1,8 @@
 # Practical Guide to Azure Cognitive Services
 
-<a href=""><img src="" alt="Practical Guide to Azure Cognitive Services" height="256px" align="right"></a>
+<a href="https://www.packtpub.com/product/microsoft-azure-cognitive-services-in-action/9781801812917"><img src="https://content.packt.com/B17513/cover_image_small.jpg" alt="Practical Guide to Azure Cognitive Services" height="256px" align="right"></a>
 
-This is the code repository for [Practical Guide to Azure Cognitive Services](), published by Packt.
+This is the code repository for [Practical Guide to Azure Cognitive Services](https://www.packtpub.com/product/microsoft-azure-cognitive-services-in-action/9781801812917), published by Packt.
 
 **Leverage the power of Azure OpenAI to optimize operations, reduce costs, and deliver cutting-edge AI solutions**
 
@@ -24,9 +24,9 @@ This book covers the following exciting features:
 * Explore the current and future journey of OpenAI
 * Understand the value proposition of different AI projects
 
-If you feel this book is for you, get your [copy]() today!
+If you feel this book is for you, get your [copy](https://www.amazon.in/Microsoft-Azure-Cognitive-Services-Accelerate-ebook/dp/B0BKT1DT34/ref=sr_1_1?keywords=practical+guide+to+azure+cognitive+services&sr=8-1) today!
 
-<a href=""><img src="https://raw.githubusercontent.com/PacktPublishing/GitHub/master/GitHub.png" alt="https://www.packtpub.com/" border="5" /></a>
+<a href="https://www.packtpub.com/product/microsoft-azure-cognitive-services-in-action/9781801812917"><img src="https://raw.githubusercontent.com/PacktPublishing/GitHub/master/GitHub.png" alt="https://www.packtpub.com/" border="5" /></a>
 
 ## Instructions and Navigations
 All of the code is organized into folders.
